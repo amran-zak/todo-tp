@@ -2,7 +2,7 @@
   <div class="add-todo">
     <div>
       <span><strong>Title </strong></span>
-      <input type="text" v-model="newTodoTitle" placeholder="Title" />
+      <input type="text" v-model="newTodoTitle" placeholder="Title" required/>
     </div>
     <div class="add-todo-range-container">
       <span>Story point </span>
@@ -70,7 +70,9 @@ export default defineComponent({
         newTodoStoryPoint.value = 1
         newTodoResponsable.value = ''
         newTodoStatus.value = ''
-      }
+      }else {
+    alert('Veuillez remplir tous les champs avant d\'ajouter une nouvelle tâche.')
+  }
     }
 
     return {
