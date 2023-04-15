@@ -1,7 +1,7 @@
 <template>
   <div class="todo-filters">
     <div class="element-filter">
-      <button :class="{ active: filter === 'all' }" @click="setFilter('all')">All</button>
+      <button :class="{ active: filter === 'all' }" @click="setFilter('all')">ALL</button>
       <input
         type="text"
         v-model="filterTodoTitle"

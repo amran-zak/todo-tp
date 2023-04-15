@@ -1,5 +1,6 @@
 <template>
   <div class="todo-list">
+    <h3>Total {{ todos.length }}</h3>
     <table>
       <thead>
         <tr>
