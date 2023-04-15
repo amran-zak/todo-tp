@@ -14,7 +14,7 @@
           @filter-story-point="filterStoryPoint"
           @filter-responsable="filterResponsable"
         ></TodoFilters>
-        <TodoList :todos="filteredTodos" @remove-todo="removeTodo"></TodoList>
+        <TodoList :todos="filteredTodos" @remove-todo="removeTodo" @remove-todos="removeTodos"></TodoList>
       </div>
     </div>
   </div>
@@ -99,6 +99,10 @@ export default defineComponent({
       state.todos.splice(index, 1)
     }
 
+    const removeTodos = (): void => {
+      state.todos.splice(0)
+    }
+
     const setFilterBy = (filter: 'all' | 'title' | 'storyPoint' | 'responsable'): void => {
       state.filter = filter
     }
@@ -143,6 +147,7 @@ export default defineComponent({
       // list of todo states
       todos: state.todos,
       removeTodo,
+      removeTodos,
 
       // filter
       filter: state.filter,

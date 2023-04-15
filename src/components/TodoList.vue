@@ -1,6 +1,7 @@
 <template>
   <div class="todo-list">
     <h3>Total {{ todos.length }}</h3>
+    <button @click="removeTodos()" class="delete-all">DELETE ALL ❌</button>
     <table>
       <thead>
         <tr>
@@ -13,19 +14,19 @@
       <tbody>
         <tr v-for="(todo, index) in todos" :key="index" :class="todo.status">
           <td v-if="todo.status === 'todo📑'">
-            {{ todo.title }} <button @click="removeTodo(index)">X</button>
+            {{ todo.title }} <button @click="removeTodo(index)"> ❌ </button>
           </td>
           <td v-else>...</td>
           <td v-if="todo.status === 'in-progress...⌛'">
-            {{ todo.title }} <button @click="removeTodo(index)">X</button>
+            {{ todo.title }} <button @click="removeTodo(index)"> ❌ </button>
           </td>
           <td v-else>...</td>
           <td v-if="todo.status === 'blockaed🛑'">
-            {{ todo.title }} <button @click="removeTodo(index)">X</button>
+            {{ todo.title }} <button @click="removeTodo(index)"> ❌ </button>
           </td>
           <td v-else>...</td>
           <td v-if="todo.status === 'done✅'">
-            {{ todo.title }} <button @click="removeTodo(index)">X</button>
+            {{ todo.title }} <button @click="removeTodo(index)"> ❌ </button>
           </td>
           <td v-else>...</td>
         </tr>
@@ -57,8 +58,13 @@ export default defineComponent({
       emit('remove-todo', index)
     }
 
+    const removeTodos = (): void => {
+      emit('remove-todos')
+    }
+
     return {
-      removeTodo
+      removeTodo,
+      removeTodos
     }
   }
 })
@@ -110,5 +116,10 @@ tr.blocked {
 tr.done {
   background-color: #28a745;
   color: white;
+}
+
+.delete-all{
+  background-color: #7b2b33;
+  color: aliceblue;
 }
 </style>
