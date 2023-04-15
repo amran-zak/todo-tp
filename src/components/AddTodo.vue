@@ -29,7 +29,7 @@
       </select>
     </div>
 
-    <button @click="addTodo">Add</button>
+    <button @click="addTodo">Add TODO</button>
   </div>
 </template>
 
@@ -108,14 +108,14 @@ export default defineComponent({
 }
 
 .add-todo button {
-  margin-left: 0.5rem;
+  margin: 0.5rem;
   font-size: 2rem;
   border: none;
   border-radius: 4px;
-  background-color: #4caf50;
+  background-color: #f218d5;
   color: #fff;
   cursor: pointer;
-  width: 30%;
+  width: 70%;
 }
 .add-todo-range-container {
   display: flex;

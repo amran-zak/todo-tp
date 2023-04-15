@@ -1,13 +1,31 @@
 <template>
-  <div class="app">
-    <h1>TP - Todo List</h1>
-    <AddTodo @add-todo="addTodo"></AddTodo>
+  <div>
+    <div class="todolist"><h1>Todo List</h1></div>
+    <div class="app-container">
+      <div class="left-panel">
+        <AddTodo @add-todo="addTodo"></AddTodo>
+        
+      </div>
+      <div class="right-panel">
+        <TodoFilters
+          :filter="filter"
+          @set-filter="setFilterBy"
+          @filter-title="filterTitle"
+          @filter-story-point="filterStoryPoint"
+          @filter-responsable="filterResponsable"
+        ></TodoFilters>
+        <TodoList :todos="filteredTodos" @remove-todo="removeTodo"></TodoList>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
 import AddTodo from './components/AddTodo.vue'
+import TodoList from './components/TodoList.vue'
+import TodoFilters from './components/TodoFilters.vue'
+import { computed } from 'vue'
 
 interface Todo {
   title: string
@@ -16,20 +34,28 @@ interface Todo {
   status: string
 }
 interface State {
-  newTodoText: string
   todos: Todo[]
+  filter: 'all' | 'title' | 'storyPoint' | 'responsable'
+  filterTitle: string
+  filterStoryPoint: number
+  filterResponsable: string
   responsibleTicketCounts: Record<string, number>
 }
 
 export default defineComponent({
   name: 'App',
   components: {
-    AddTodo
+    AddTodo,
+    TodoList,
+    TodoFilters
   },
   setup() {
     const state = reactive<State>({
-      newTodoText: '',
       todos: [] as Todo[],
+      filter: 'all',
+      filterTitle: '',
+      filterStoryPoint: 1,
+      filterResponsable: '',
       responsibleTicketCounts: {}
     })
     // @ permet aux parents d'écouter ces événements et d'agir en conséquence.
@@ -38,12 +64,13 @@ export default defineComponent({
 
       // Vérifier si le nombre de tickets attribués en statut "in-progress" au responsable est inférieur à 3
       const inProgressTodosForResponsable = state.todos.filter(
-        (todo) => todo.responsable === responsable && (todo.status === 'in-progress' || todo.storyPoint )
+        (todo) =>
+          todo.responsable === responsable && (todo.status === 'in-progress' || todo.storyPoint)
       )
       // La somme des story points d'un responsable
-      let sumStoryPoint = state.todos.filter(
-        todo => todo.responsable === responsable
-      ).reduce((sum, todo) => sum + todo.storyPoint, 0);
+      let sumStoryPoint = state.todos
+        .filter((todo) => todo.responsable === responsable)
+        .reduce((sum, todo) => sum + todo.storyPoint, 0)
 
       if (inProgressTodosForResponsable.length < 3 || sumStoryPoint <= 10) {
         // Ajouter le nouveau todo
@@ -67,12 +94,91 @@ export default defineComponent({
         )
       }
     }
-   
+
+    const removeTodo = (index: number): void => {
+      state.todos.splice(index, 1)
+    }
+
+    const setFilterBy = (filter: 'all' | 'title' | 'storyPoint' | 'responsable'): void => {
+      state.filter = filter
+    }
+
+    const filterTitle = (title: string): void => {
+      state.filterTitle = title
+    }
+
+    const filterStoryPoint = (storyPoint: number): void => {
+      state.filterStoryPoint = storyPoint
+    }
+
+    const filterResponsable = (responsable: string): void => {
+      state.filterResponsable = responsable
+    }
+
+    const filteredTodos = computed(() => {
+      switch (state.filter) {
+        case 'all':
+          return state.todos
+        case 'title':
+          return state.todos.filter((todo) =>
+            todo.title.toLowerCase().includes(state.filterTitle.toLowerCase())
+          )
+        case 'storyPoint':
+          return state.filterStoryPoint == 0
+            ? state.todos
+            : state.todos.filter((todo) => todo.storyPoint == state.filterStoryPoint)
+        case 'responsable':
+          return state.filterResponsable === ''
+            ? state.todos
+            : state.todos.filter((todo) => todo.responsable == state.filterResponsable)
+        default:
+          return state.todos
+      }
+    })
+
     return {
-      newTodoText: state.newTodoText,
-      todos: state.todos,
+      // add todo
       addTodo,
+
+      // list of todo states
+      todos: state.todos,
+      removeTodo,
+
+      // filter
+      filter: state.filter,
+
+      setFilterBy,
+      filteredTodos,
+
+      filterTitle,
+      filterStoryPoint,
+      filterResponsable
     }
   }
 })
 </script>
+
+<style scoped>
+.app-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.left-panel {
+  flex-basis: 30%;
+}
+
+.right-panel {
+  flex-basis: 65%;
+}
+.todo.list {
+  text-align: center;
+}
+.add-todo {
+  border: 1px solid rgb(233, 12, 230);
+  padding: 4%;
+}
+.todolist {
+  text-align: center;
+}
+</style>
