@@ -14,19 +14,42 @@
       <tbody>
         <tr v-for="(todo, index) in todos" :key="index" :class="todo.status">
           <td v-if="todo.status === 'todo📑'">
-            {{ todo.title }} <button @click="removeTodo(index)"> ❌ </button>
+            <div class="todo-item" @click="editTodoTitle(index)">
+              <span v-if="todo.title">{{ todo.title }}</span>
+              <span v-if="todo.storyPoint">[{{ todo.storyPoint }}]</span>
+              <span v-if="todo.responsable">{{ todo.responsable }}</span>
+              <button @click.stop="removeTodo(index)">❌</button>
+            </div>
           </td>
           <td v-else>...</td>
           <td v-if="todo.status === 'in-progress...⌛'">
-            {{ todo.title }} <button @click="removeTodo(index)"> ❌ </button>
+            <div class="todo-item" @click="editTodoTitle(index)">
+              <span v-if="todo.title">{{ todo.title }}</span>
+              <span v-if="todo.storyPoint">[{{ todo.storyPoint }}]</span>
+              <span v-if="todo.responsable">{{ todo.responsable }}</span>
+              <button @click.stop="removeTodo(index)">❌</button>
+            </div>
+            <!-- <div class="todo-item-right">
+              <button @click.stop="removeTodo(index)">❌</button>
+            </div> -->
           </td>
           <td v-else>...</td>
           <td v-if="todo.status === 'blockaed🛑'">
-            {{ todo.title }} <button @click="removeTodo(index)"> ❌ </button>
+            <div class="todo-item" @click="editTodoTitle(index)">
+              <span v-if="todo.title">{{ todo.title }}</span>
+              <span v-if="todo.storyPoint">[{{ todo.storyPoint }}]</span>
+              <span v-if="todo.responsable">{{ todo.responsable }}</span>
+              <button @click.stop="removeTodo(index)">❌</button>
+            </div>
           </td>
           <td v-else>...</td>
           <td v-if="todo.status === 'done✅'">
-            {{ todo.title }} <button @click="removeTodo(index)"> ❌ </button>
+            <div class="todo-item" @click="editTodoTitle(index)">
+              <span v-if="todo.title">{{ todo.title }}</span>
+              <span v-if="todo.storyPoint">[{{ todo.storyPoint }}]</span>
+              <span v-if="todo.responsable">{{ todo.responsable }}</span>
+              <button @click.stop="removeTodo(index)">❌</button>
+            </div>
           </td>
           <td v-else>...</td>
         </tr>
@@ -36,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 
 interface Todo {
   title: string
@@ -53,25 +76,52 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props, { emit }) {
-    const removeTodo = (index: number): void => {
-      emit('remove-todo', index)
-    }
+  emits: ['remove-todo', 'edit-todo', 'remove-todos'],
+  methods: {
+    removeTodo: function (index: number): void {
+      this.$emit('remove-todo', index)
+    },
+    editTodoTitle: function (index: number): void {
+      const todo = this.todos[index]
 
-    const removeTodos = (): void => {
-      emit('remove-todos')
-    }
+      // Set new title
+      const newTitle = prompt('Enter new title', todo.title)
+      if (newTitle === null || newTitle.trim() === '') {
+        return
+      }
+      todo.title = newTitle.trim()
 
-    return {
-      removeTodo,
-      removeTodos
+      // Set new responsible
+      const newResponsable = prompt('Enter new responsible', todo.responsable)
+      if (newResponsable === null || newResponsable.trim() === '') {
+        return
+      }
+      todo.responsable = newResponsable.trim()
+
+      // Set new status
+      const newStatus = prompt('Enter new status', todo.status)
+      if (newStatus === null || newStatus.trim() === '') {
+        return
+      }
+      todo.status = newStatus.trim()
+
+      // Set new story point
+      const newStoryPoint = prompt('Enter new story point', todo.storyPoint.toString())
+      if (newStoryPoint === null || isNaN(parseInt(newStoryPoint))) {
+        return
+      }
+      todo.storyPoint = parseInt(newStoryPoint)
+
+      this.$emit('edit-todo', todo)
+    },
+    removeTodos : function (): void {
+      this.$emit('remove-todo')
     }
   }
 })
 </script>
 
 <style scoped>
-
 .todo-list {
   margin-top: 1rem;
   width: 100%;
@@ -118,8 +168,20 @@ tr.done {
   color: white;
 }
 
-.delete-all{
+.delete-all {
   background-color: #7b2b33;
   color: aliceblue;
+}
+
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem;
+  border-bottom: 1px solid gray;
+  cursor: pointer;
+}
+.todo-item:hover {
+  background-color: #a51e7b;
+  color: #f2f2f2;
 }
 </style>
