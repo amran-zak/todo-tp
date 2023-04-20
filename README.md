@@ -1,6 +1,6 @@
 # todo-tp
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/80887236/232216131-af809fff-bc46-475a-bc7c-6d7dec8e0da1.png" width="50%">
+  <img src="https://user-images.githubusercontent.com/80887236/232216131-af809fff-bc46-475a-bc7c-6d7dec8e0da1.png" width="80%">
 </p>
 
 This template should help get you started developing with Vue 3 in Vite.
